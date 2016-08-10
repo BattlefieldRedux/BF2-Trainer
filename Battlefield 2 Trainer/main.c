@@ -42,8 +42,12 @@ DWORD bf2_Nametagsjump_offset1 = 0x0012EDE3;  // at these address offsets
 DWORD bf2_Nametagsjump_offset2 = 0x0012EDF2;  // controls when and nametags are drawn
 DWORD bf2_Nametagsjump_offset3 = 0x0012D03D;  // over friendly and enemy players
 
+DWORD bf2_NametagsMaxDistance_offset = 0x00239A3C;
+
 DWORD bf2_3Dmapjump_offset0 = 0x0012E73D;  // the conditinal jumps  at these address offsets
 DWORD bf2_3Dmapjump_offset1 = 0x00130363;  // control what information is drawn on 3D map
+
+DWORD bf2_3Dmap_maxDistance_offset = 0x00239A84;
 
 DWORD bf2_developerconsolejump_offset0 = 0x0029FD00; // fliping the conditional jumps at these addresses
 DWORD bf2_developerconsolejump_offset1 = 0x0029FD18; // allows one to run console commands reserved for developers only
@@ -52,7 +56,7 @@ DWORD bf2_renderer_object_ptr_base_offset = 0x0023B970; // address contained at 
 DWORD renderer_object_base_ptr = 0x00000000;   // defined dynamically
 
 DWORD drawUnderGrowth_offset = 0x000006a6;  // these renderer variables are usually reserved to be modifed only in developer mode
-DWORD drawParticles_offset = 0x0000069f;
+DWORD drawParticles_offset = 0x0000069f;  
 DWORD drawSunflare_offset = 0x000006b3;
 DWORD drawSkydome_offset = 0x000006b2;
 DWORD drawPostProduction_offset = 0x000006b5;
@@ -90,6 +94,9 @@ BOOL IsHack1On, IsHack2On, IsHack3On, IsHack4On, IsHack5On, IsHack6On, FirstTime
 	BYTE THREE_D_Map[2] = {0xEB, 0x0E};
 	BYTE DistanceESP[2] = {0x75, 0x70};
 
+	BYTE defaultNametagMaxDistance[4] = { 0x00, 0x00, 0x00, 0x00 };
+	BYTE defaultMapMaxDistance[4] = { 0x00, 0x00, 0x00, 0x00 };
+
 	BYTE DevConsole0[2] = { 0xEB, 0x36 };
 	BYTE DevConsole1[2] = { 0xEB, 0x1E };
 
@@ -97,7 +104,6 @@ BOOL IsHack1On, IsHack2On, IsHack3On, IsHack4On, IsHack5On, IsHack6On, FirstTime
 	BYTE renderer_object_base_address[4] = { 0 };
 	BYTE bf2_viewdistance_scalar_address[4] = { 0 };
 	BYTE bf2_level_fog_params_address[4] = { 0 };
-
 
 	
 	BYTE bf2_viewdistance_scalar_high[1] = { 0x40 };  // higher byte values will work but can cause the game crash with an out of memory error (too much is drawn on the screen with insanely increased viewdistance)
@@ -153,9 +159,9 @@ void Initialize(HWND hwnd,WPARAM wParam, LPARAM lParam) {
 	FirstTime1=TRUE; //This is the true / false flag for "is this the first time the trainers read the game code
 
 	IsHack1On=FALSE; 
-	IsHack2On=FALSE; 
+	IsHack2On=FALSE;
 	IsHack3On=FALSE;
-    IsHack4On=FALSE;
+	IsHack4On=FALSE;
 	IsHack5On=FALSE;
 	IsHack6On=FALSE;
 
@@ -209,6 +215,9 @@ void timerCall() //functions in here run according to timer above
 		ReadProcessMemory(hand, (void*)(RendDxBase + bf2_3Dmapjump_offset0), &original_code7,2, &bytes);
 		ReadProcessMemory(hand, (void*)(RendDxBase + bf2_3Dmapjump_offset1), &original_code8,2, &bytes);
 
+		ReadProcessMemory(hand, (void*)(RendDxBase + bf2_NametagsMaxDistance_offset), &defaultNametagMaxDistance, 4, &bytes);
+		ReadProcessMemory(hand, (void*)(RendDxBase + bf2_3Dmap_maxDistance_offset), &defaultMapMaxDistance, 4, &bytes);
+
 		ReadProcessMemory(hand, (void*)(dwBF2Base + bf2_viewdistance_scalar_ptr_base_offset), &bf2_viewdistance_scalar_address, 4, &bytes);
 		bf2_viewdistance_scalar_ptr = buildDwordFromByteArray(bf2_viewdistance_scalar_address);
 
@@ -237,7 +246,7 @@ void timerCall() //functions in here run according to timer above
 			{  
 				WriteProcessMemory(hand, (void*) (dwBF2Base + bf2_Minimapjump_offset0) , &MiniMapInf, 2, &bytes);
 				WriteProcessMemory(hand, (void*) (dwBF2Base + bf2_Minimapjump_offset1) , &MiniMapVeh, 2, &bytes);
-				WriteProcessMemory(hand, (void*) (dwBF2Base + bf2_Minimapjump_offset2) , &MiniMapLW, 2, &bytes);
+				WriteProcessMemory(hand, (void*) (dwBF2Base + bf2_Minimapjump_offset2) , &MiniMapLW, 2, &bytes);			
 				IsHack1On=TRUE; //Sets our "Is On" flag to "on"
 			}
 			else // .... do this
@@ -261,6 +270,7 @@ void timerCall() //functions in here run according to timer above
 				WriteProcessMemory(hand, (void*)(RendDxBase + bf2_Nametagsjump_offset1), &NameTags2, 5, &bytes);
 				WriteProcessMemory(hand, (void*)(RendDxBase + bf2_Nametagsjump_offset2), &NameTags3, 6, &bytes);
 				WriteProcessMemory(hand, (void*)(RendDxBase + bf2_Nametagsjump_offset3), &NameTags4, 2, &bytes);
+				WriteProcessMemory(hand, (void*)(RendDxBase + bf2_NametagsMaxDistance_offset), &tenK_float, 4, &bytes);
 				IsHack2On=TRUE; 
 			}
 			else 
@@ -270,6 +280,7 @@ void timerCall() //functions in here run according to timer above
 				WriteProcessMemory(hand, (void*)(RendDxBase + bf2_Nametagsjump_offset1), &original_code4,5, &bytes);
 				WriteProcessMemory(hand, (void*)(RendDxBase + bf2_Nametagsjump_offset2), &original_code5,6, &bytes);
 				WriteProcessMemory(hand, (void*)(RendDxBase + bf2_Nametagsjump_offset3), &original_code6,2, &bytes);
+				WriteProcessMemory(hand, (void*)(RendDxBase + bf2_NametagsMaxDistance_offset), &defaultNametagMaxDistance, 4, &bytes);
 				IsHack2On=FALSE; 
 			}
 	}
@@ -281,6 +292,7 @@ void timerCall() //functions in here run according to timer above
 			{  
 				WriteProcessMemory(hand, (void*)(RendDxBase + bf2_3Dmapjump_offset0), &THREE_D_Map, 2, &bytes);
 				WriteProcessMemory(hand, (void*)(RendDxBase + bf2_3Dmapjump_offset1), &DistanceESP, 2, &bytes);
+				WriteProcessMemory(hand, (void*)(RendDxBase + bf2_3Dmap_maxDistance_offset), &tenK_float, 4, &bytes);
 				IsHack3On=TRUE; 
 			}
 			else
@@ -288,6 +300,7 @@ void timerCall() //functions in here run according to timer above
 				
 				WriteProcessMemory(hand, (void*)(RendDxBase + bf2_3Dmapjump_offset0), &original_code7,2, &bytes); // Write the original code into memory
 				WriteProcessMemory(hand, (void*)(RendDxBase + bf2_3Dmapjump_offset1), &original_code8,2, &bytes);
+				WriteProcessMemory(hand, (void*)(RendDxBase + bf2_3Dmap_maxDistance_offset), &defaultMapMaxDistance, 4, &bytes);
 				IsHack3On=FALSE; 
 			}
 	}
