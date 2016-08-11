@@ -65,9 +65,9 @@ GUIDELINES DESIGNINFO
 BEGIN
     IDD_MAINDLG, DIALOG
     BEGIN
-        RIGHTMARGIN, 199
+        LEFTMARGIN, 2
+        RIGHTMARGIN, 188
         TOPMARGIN, 1
-        BOTTOMMARGIN, 128
     END
 END
 #endif    // APSTUDIO_INVOKED
@@ -78,24 +78,23 @@ END
 // Dialog
 //
 
-IDD_MAINDLG DIALOGEX 0, 0, 202, 131
+IDD_MAINDLG DIALOGEX 0, 0, 191, 125
 STYLE DS_SYSMODAL | DS_SETFONT | DS_MODALFRAME | WS_MINIMIZEBOX | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "BF2 Trainer"
 FONT 8, "Verdana", 0, 0, 0x0
 BEGIN
     CTEXT           "Included BF2 Cheats",IDC_STATIC,8,7,174,8
-    PUSHBUTTON      "&About",IDC_ABOUT,95,105,50,14,BS_FLAT
-    PUSHBUTTON      "E&xit",IDC_EXIT,149,105,50,14,BS_FLAT
-    GROUPBOX        "Options",IDC_STATIC,2,20,197,72
+    PUSHBUTTON      "&About",IDC_ABOUT,78,102,50,14,BS_FLAT
+    PUSHBUTTON      "E&xit",IDC_EXIT,138,102,50,14,BS_FLAT
+    GROUPBOX        "Options",IDC_STATIC,2,20,186,72
     LTEXT           "Numpad 1 - Enemys on Minimap",IDC_STATIC,12,28,166,10
     LTEXT           "Numpad 2 - Enemy Nametags",IDC_STATIC,12,36,167,10
-    LTEXT           "Cheat Responsibly",IDC_STATIC,3,105,76,14,WS_DISABLED
+    LTEXT           "Cheat Responsibly",IDC_STATIC,2,105,75,8,WS_DISABLED
     LTEXT           "Numpad 3 - 3D Map Distance",IDC_STATIC,12,44,153,10,SS_CENTERIMAGE
-    LTEXT           "Hotkeys Toggle ON / OFF",IDC_STATIC,117,92,82,10,WS_DISABLED
-    LTEXT           "Numpad 4 - Fog/smoke/dust removal +viewdistance ",IDC_STATIC,12,52,176,10,SS_CENTERIMAGE
-    LTEXT           "Numpad 5 - No Sky",IDC_STATIC,12,61,81,10,SS_CENTERIMAGE
-    LTEXT           "Numpad 6 - unlock all weapons",IDC_STATIC,12,69,158,10,SS_CENTERIMAGE
-    LTEXT           "Numpad 7 - enable developer only commands",IDC_STATIC,12,77,158,10,SS_CENTERIMAGE
+    LTEXT           "Hotkeys Toggle ON / OFF",IDC_STATIC,100,79,82,10,WS_DISABLED
+    LTEXT           "Numpad 4 - Fog/smoke/dust removal +viewdistance ",IDC_STATIC,12,53,176,10,SS_CENTERIMAGE
+    LTEXT           "Numpad 5 - No Sky",IDC_STATIC,12,62,81,10,SS_CENTERIMAGE
+    LTEXT           "Numpad 6 - enable developer only commands",IDC_STATIC,12,71,158,10,SS_CENTERIMAGE
 END
 
 
