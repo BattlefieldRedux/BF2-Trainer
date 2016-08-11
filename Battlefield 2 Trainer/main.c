@@ -74,12 +74,12 @@ DWORD bf2_viewdistance_scalar_ptr = 0x00000000;  // defined dynamically
 DWORD bf2_viewdistance_scalar_ptr_base_offset = 0x005A557C;
 DWORD bf2_viewdistance_scalar_address_offset = 0x000004FB;
 
-
+DWORD bf2_unlocksjump_offset = 0x001028C5;
 
 HANDLE pFile; //Used for logging address to file (not implimented in this build)
 
 //below you will list the BOOLs for function toggles
-BOOL IsHack1On, IsHack2On, IsHack3On, IsHack4On, IsHack5On, IsHack6On, FirstTime1;
+BOOL IsHack1On, IsHack2On, IsHack3On, IsHack4On, IsHack5On, IsHack6On, IsHack7On, FirstTime1;
 
 
     BYTE MiniMapInf[2] = {0x74, 0x0C};	
@@ -100,6 +100,7 @@ BOOL IsHack1On, IsHack2On, IsHack3On, IsHack4On, IsHack5On, IsHack6On, FirstTime
 	BYTE DevConsole0[2] = { 0xEB, 0x36 };
 	BYTE DevConsole1[2] = { 0xEB, 0x1E };
 
+	BYTE UnlockNOPS[2] = { 0x90, 0x90 };
 
 	BYTE renderer_object_base_address[4] = { 0 };
 	BYTE bf2_viewdistance_scalar_address[4] = { 0 };
@@ -136,6 +137,7 @@ BOOL IsHack1On, IsHack2On, IsHack3On, IsHack4On, IsHack5On, IsHack6On, FirstTime
 
 	BYTE original_code9[2] = {0};
 	BYTE original_code10[2] = {0};
+	BYTE original_code11[2] = { 0 };
 	
 
 	BYTE unknown_float[4] = { 0x00, 0x00, 0x00, 0x00 };  
@@ -164,6 +166,7 @@ void Initialize(HWND hwnd,WPARAM wParam, LPARAM lParam) {
 	IsHack4On=FALSE;
 	IsHack5On=FALSE;
 	IsHack6On=FALSE;
+	IsHack7On=FALSE;
 
 
 	if(GameRunning==TRUE)
@@ -229,6 +232,8 @@ void timerCall() //functions in here run according to timer above
 
 		ReadProcessMemory(hand, (void*)(dwBF2Base + bf2_developerconsolejump_offset0), &original_code9, 2, &bytes);
 		ReadProcessMemory(hand, (void*)(dwBF2Base + bf2_developerconsolejump_offset1), &original_code10, 2, &bytes);
+
+		ReadProcessMemory(hand, (void*)(dwBF2Base + bf2_unlocksjump_offset), &original_code11, 2, &bytes);
 
 
 
@@ -360,26 +365,39 @@ void timerCall() //functions in here run according to timer above
 			WriteProcessMemory(hand, (void*)(renderer_object_base_ptr + drawSkydome_offset), &zero_byte, 1, &bytes);
 			IsHack5On = TRUE; 
 		}
-		else // .... do this
+		else
 		{
 			WriteProcessMemory(hand, (void*)(renderer_object_base_ptr + drawSkydome_offset), &one_byte, 1, &bytes);
 			IsHack5On = FALSE; 
 		}
 
 	}
-	if (GetAsyncKeyState(VK_NUMPAD6)) 
+	if (GetAsyncKeyState(VK_NUMPAD6))
 	{
 		if (IsHack6On == FALSE)
 		{
+			WriteProcessMemory(hand, (void*)(dwBF2Base + bf2_unlocksjump_offset), &UnlockNOPS, 2, &bytes);
+			IsHack6On = TRUE;
+		}
+		else
+		{
+			WriteProcessMemory(hand, (void*)(dwBF2Base + bf2_unlocksjump_offset), &original_code11, 2, &bytes);
+			IsHack6On = FALSE;
+		}
+	}
+	if (GetAsyncKeyState(VK_NUMPAD7)) 
+	{
+		if (IsHack7On == FALSE)
+		{
 			WriteProcessMemory(hand, (void*)(dwBF2Base + bf2_developerconsolejump_offset0), &DevConsole0, 2, &bytes);
 			WriteProcessMemory(hand, (void*)(dwBF2Base + bf2_developerconsolejump_offset1), &DevConsole1, 2, &bytes);
-			IsHack6On = TRUE;
+			IsHack7On = TRUE;
 		}
 		else 
 		{
 			WriteProcessMemory(hand, (void*)(dwBF2Base + bf2_developerconsolejump_offset0), &original_code9, 2, &bytes);
 			WriteProcessMemory(hand, (void*)(dwBF2Base + bf2_developerconsolejump_offset1), &original_code10, 2, &bytes); 
-			IsHack6On = FALSE; 
+			IsHack7On = FALSE; 
 		}
 
 	}
